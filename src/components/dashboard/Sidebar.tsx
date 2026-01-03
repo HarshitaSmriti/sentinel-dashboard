@@ -48,7 +48,7 @@ const Sidebar: React.FC = () => {
           </div>
           {!collapsed && (
             <span className="font-display font-semibold text-sidebar-foreground">
-              FraudShield
+              Fraud Sentinel
             </span>
           )}
         </div>

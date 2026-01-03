@@ -10,11 +10,11 @@ const Footer: React.FC = () => {
             <div className="w-6 h-6 rounded-md bg-accent flex items-center justify-center">
               <Shield className="w-4 h-4 text-accent-foreground" />
             </div>
-            <span className="font-display font-semibold">FraudShield</span>
+            <span className="font-display font-semibold">Fraud Sentinel</span>
           </div>
           
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} FraudShield AI. All rights reserved.
+            © {new Date().getFullYear()} FinSentinel Labs. All rights reserved.
           </p>
           
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
