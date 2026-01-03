@@ -1,11 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Shield, LogIn, LogOut } from 'lucide-react';
+import { Shield, LogIn, LogOut, Sun, Moon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
+  const [isDark, setIsDark] = useState(true);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('theme');
+    const prefersDark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    setIsDark(prefersDark);
+    document.documentElement.classList.toggle('dark', prefersDark);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = !isDark;
+    setIsDark(newTheme);
+    document.documentElement.classList.toggle('dark', newTheme);
+    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+  };
 
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border">
@@ -16,11 +31,21 @@ const Navbar: React.FC = () => {
             <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
               <Shield className="w-5 h-5 text-accent-foreground" />
             </div>
-            <span className="font-display font-semibold text-lg">FraudShield</span>
+            <span className="font-display font-semibold text-lg">Fraud Sentinel</span>
           </Link>
 
           {/* Right side */}
           <div className="flex items-center gap-4">
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleTheme}
+              className="text-muted-foreground"
+            >
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
+
             {isAuthenticated ? (
               <>
                 <span className="text-sm text-muted-foreground hidden sm:block">
