@@ -12,10 +12,6 @@ import { authApi } from '@/lib/api';
 const signupSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
-  confirmPassword: z.string().min(6, 'Password must be at least 6 characters'),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
 });
 
 type SignupFormData = z.infer<typeof signupSchema>;
@@ -74,7 +70,7 @@ const Signup: React.FC = () => {
               <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
                 <Shield className="w-6 h-6 text-accent-foreground" />
               </div>
-              <span className="font-display font-semibold text-xl">FraudShield</span>
+              <span className="font-display font-semibold text-xl">Fin Sentinel</span>
             </div>
             <h1 className="text-3xl font-display font-light tracking-tight mb-2">
               Create your account
@@ -115,16 +111,6 @@ const Signup: React.FC = () => {
                 />
               </div>
 
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
-                <Input
-                  {...register('confirmPassword')}
-                  type="password"
-                  placeholder="Confirm password"
-                  className="pl-11"
-                  error={errors.confirmPassword?.message}
-                />
-              </div>
             </div>
 
             <Button 

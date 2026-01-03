@@ -30,7 +30,7 @@ const Login: React.FC = () => {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: 'demo@fraudshield.ai',
+      email: 'demo@finsentinel.ai',
       password: 'demo123',
     },
   });
@@ -72,7 +72,7 @@ const Login: React.FC = () => {
               <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
                 <Shield className="w-6 h-6 text-accent-foreground" />
               </div>
-              <span className="font-display font-semibold text-xl">FraudShield</span>
+              <span className="font-display font-semibold text-xl">Fin Sentinel</span>
             </div>
             <h1 className="text-3xl font-display font-light tracking-tight mb-2">
               Welcome back
