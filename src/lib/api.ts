@@ -27,8 +27,9 @@ export const authApi = {
   login: async (credentials: LoginCredentials): Promise<ApiResponse<{ user: User; token: string }>> => {
     await delay(800);
     
-    // Mock validation
-    if (credentials.email === 'demo@fraudshield.ai' && credentials.password === 'demo123') {
+    // Mock validation - accept both legacy and new branded emails
+    const validEmails = ['demo@finsentinel.ai', 'demo@fraudshield.ai'];
+    if (validEmails.includes(credentials.email) && credentials.password === 'demo123') {
       const user: User = {
         id: '1',
         email: credentials.email,
@@ -59,7 +60,8 @@ export const authApi = {
     await delay(800);
     
     // Mock validation - simulate email already exists
-    if (credentials.email === 'demo@fraudshield.ai') {
+    const reservedEmails = ['demo@finsentinel.ai', 'demo@fraudshield.ai'];
+    if (reservedEmails.includes(credentials.email)) {
       return {
         success: false,
         error: 'An account with this email already exists',
@@ -86,7 +88,7 @@ export const authApi = {
         success: true,
         data: {
           id: '1',
-          email: 'demo@fraudshield.ai',
+          email: 'demo@finsentinel.ai',
           name: 'Demo User',
           role: 'analyst',
         },
