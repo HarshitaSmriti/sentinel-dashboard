@@ -8,15 +8,11 @@ interface AuthContextType extends AuthState {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const TOKEN_KEY = 'fraudshield_token';
+const TOKEN_KEY = 'mindmate_token';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, setState] = useState<AuthState>({
-    user: null,
-    token: null,
-    isAuthenticated: false,
-    isLoading: true,
+    user: null, token: null, isAuthenticated: false, isLoading: true,
   });
 
   const verifyStoredToken = useCallback(async () => {
@@ -24,12 +20,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (token) {
       const result = await authApi.verifyToken(token);
       if (result.success && result.data) {
-        setState({
-          user: result.data,
-          token,
-          isAuthenticated: true,
-          isLoading: false,
-        });
+        setState({ user: result.data, token, isAuthenticated: true, isLoading: false });
         return;
       }
       localStorage.removeItem(TOKEN_KEY);
@@ -37,26 +28,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setState(prev => ({ ...prev, isLoading: false }));
   }, []);
 
-  useEffect(() => {
-    verifyStoredToken();
-  }, [verifyStoredToken]);
+  useEffect(() => { verifyStoredToken(); }, [verifyStoredToken]);
 
   const login = async (credentials: LoginCredentials) => {
     setState(prev => ({ ...prev, isLoading: true }));
-    
     const result = await authApi.login(credentials);
-    
     if (result.success && result.data) {
       localStorage.setItem(TOKEN_KEY, result.data.token);
-      setState({
-        user: result.data.user,
-        token: result.data.token,
-        isAuthenticated: true,
-        isLoading: false,
-      });
+      setState({ user: result.data.user, token: result.data.token, isAuthenticated: true, isLoading: false });
       return { success: true };
     }
-    
     setState(prev => ({ ...prev, isLoading: false }));
     return { success: false, error: result.error };
   };
@@ -64,12 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     await authApi.logout();
     localStorage.removeItem(TOKEN_KEY);
-    setState({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      isLoading: false,
-    });
+    setState({ user: null, token: null, isAuthenticated: false, isLoading: false });
   };
 
   return (
@@ -81,8 +57,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
 };

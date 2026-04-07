@@ -1,57 +1,9 @@
-// Transaction Types
-export type TransactionType = 'PAYMENT' | 'TRANSFER' | 'CASH_OUT' | 'CASH_IN' | 'DEBIT';
-
-export interface Transaction {
-  id: string;
-  type: TransactionType;
-  amount: number;
-  nameOrig: string;
-  oldBalanceOrig: number;
-  newBalanceOrig: number;
-  nameDest: string;
-  oldBalanceDest: number;
-  newBalanceDest: number;
-  timestamp: string;
-  status: 'pending' | 'processed' | 'flagged';
-}
-
-export interface TransactionFormData {
-  type: TransactionType;
-  amount: number;
-  nameOrig: string;
-  oldBalanceOrig: number;
-  newBalanceOrig: number;
-  nameDest: string;
-  oldBalanceDest: number;
-  newBalanceDest: number;
-}
-
-// Fraud Analysis Types
-export type RiskLevel = 'low' | 'medium' | 'high';
-
-export interface FraudAnalysis {
-  id: string;
-  transactionId: string;
-  riskLevel: RiskLevel;
-  riskScore: number;
-  explanation: string;
-  factors: RiskFactor[];
-  timestamp: string;
-}
-
-export interface RiskFactor {
-  title: string;
-  description: string;
-  impact: 'positive' | 'negative' | 'neutral';
-  weight: number;
-}
-
-// Authentication Types
+// User
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'analyst' | 'viewer';
+  avatar?: string;
 }
 
 export interface AuthState {
@@ -71,30 +23,37 @@ export interface SignupCredentials {
   password: string;
 }
 
-// Notification Types
-export type NotificationSeverity = 'low' | 'medium' | 'high';
-
-export interface Notification {
+// Chat
+export interface ChatMessage {
   id: string;
-  message: string;
-  time: string;
-  severity: NotificationSeverity;
-  read: boolean;
+  role: 'user' | 'ai';
+  content: string;
+  timestamp: string;
 }
 
-// API Response Types
+export interface ChatSession {
+  id: string;
+  title: string;
+  date: string;
+  messages: ChatMessage[];
+}
+
+// Mood
+export type MoodType = 'happy' | 'neutral' | 'sad' | 'angry' | 'tired';
+
+export interface MoodEntry {
+  id: string;
+  mood: MoodType;
+  label: string;
+  emoji: string;
+  score: number;
+  date: string;
+  note?: string;
+}
+
+// API
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
-  message?: string;
-}
-
-// Dashboard Stats
-export interface DashboardStats {
-  totalTransactions: number;
-  flaggedTransactions: number;
-  totalVolume: number;
-  avgRiskScore: number;
-  recentAlerts: number;
 }
