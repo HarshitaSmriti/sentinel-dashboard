@@ -1,137 +1,75 @@
-import { Transaction, FraudAnalysis, DashboardStats, TransactionType, RiskLevel, Notification } from './types';
+import { ChatSession, MoodEntry, ChatMessage } from './types';
 
-const transactionTypes: TransactionType[] = ['PAYMENT', 'TRANSFER', 'CASH_OUT', 'CASH_IN', 'DEBIT'];
+const generateId = () => Math.random().toString(36).substring(2, 12);
 
-const generateId = () => Math.random().toString(36).substring(2, 15);
+const aiResponses = [
+  "I hear you, and I want you to know that what you're feeling is completely valid. Would you like to talk more about what's been going on?",
+  "It sounds like you're going through a lot right now. Remember, it's okay to take things one step at a time. What feels most overwhelming?",
+  "Thank you for sharing that with me. It takes courage to open up. Have you tried any relaxation techniques lately, like deep breathing or a short walk?",
+  "I understand that can be really stressful, especially during exam season. Let's break this down together — what's the most pressing thing on your mind?",
+  "Your feelings matter, and I'm here to listen without judgment. Sometimes just putting thoughts into words can help. Tell me more?",
+  "That's a really insightful observation about yourself. Self-awareness is a powerful tool. What do you think might help you feel a bit better today?",
+  "It's perfectly normal to feel that way. Many students experience similar feelings. Would you like me to suggest some coping strategies that others have found helpful?",
+  "I appreciate you trusting me with this. Let's explore what's been triggering these feelings. When did you first start noticing them?",
+];
 
-const generateName = (prefix: string) => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let result = prefix;
-  for (let i = 0; i < 10; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+export const getRandomAiResponse = (): string => {
+  return aiResponses[Math.floor(Math.random() * aiResponses.length)];
 };
 
-export const generateMockTransaction = (overrides?: Partial<Transaction>): Transaction => {
-  const type = transactionTypes[Math.floor(Math.random() * transactionTypes.length)];
-  const amount = Math.floor(Math.random() * 50000) + 100;
-  const oldBalanceOrig = Math.floor(Math.random() * 100000) + amount;
-  
-  return {
-    id: generateId(),
-    type,
-    amount,
-    nameOrig: generateName('C'),
-    oldBalanceOrig,
-    newBalanceOrig: oldBalanceOrig - amount,
-    nameDest: generateName('M'),
-    oldBalanceDest: Math.floor(Math.random() * 50000),
-    newBalanceDest: Math.floor(Math.random() * 50000) + amount,
-    timestamp: new Date(Date.now() - Math.floor(Math.random() * 86400000)).toISOString(),
-    status: Math.random() > 0.8 ? 'flagged' : Math.random() > 0.3 ? 'processed' : 'pending',
-    ...overrides,
-  };
-};
-
-export const generateMockTransactions = (count: number): Transaction[] => {
-  return Array.from({ length: count }, () => generateMockTransaction());
-};
-
-export const mockTransactions: Transaction[] = generateMockTransactions(50);
-
-export const generateMockFraudAnalysis = (transactionId: string): FraudAnalysis => {
-  const riskScore = Math.random() * 100;
-  let riskLevel: RiskLevel;
-  
-  if (riskScore < 30) riskLevel = 'low';
-  else if (riskScore < 70) riskLevel = 'medium';
-  else riskLevel = 'high';
-
-  return {
-    id: generateId(),
-    transactionId,
-    riskLevel,
-    riskScore: Math.round(riskScore * 100) / 100,
-    explanation: `This transaction has been analyzed using our advanced RAG-powered fraud detection system. The analysis considered multiple factors including transaction patterns, account history, and behavioral anomalies. ${riskLevel === 'high' ? 'Several red flags were detected that require immediate attention.' : riskLevel === 'medium' ? 'Some unusual patterns were identified that warrant monitoring.' : 'The transaction appears to follow normal patterns.'}`,
-    factors: [
-      {
-        title: 'Transaction Amount',
-        description: riskScore > 50 ? 'Amount significantly higher than account average' : 'Amount within normal range',
-        impact: riskScore > 50 ? 'negative' : 'positive',
-        weight: 0.25,
-      },
-      {
-        title: 'Account History',
-        description: riskScore > 70 ? 'Limited transaction history for this account' : 'Established transaction history',
-        impact: riskScore > 70 ? 'negative' : 'positive',
-        weight: 0.2,
-      },
-      {
-        title: 'Geographic Pattern',
-        description: riskScore > 60 ? 'Transaction origin differs from usual location' : 'Transaction from familiar location',
-        impact: riskScore > 60 ? 'negative' : 'neutral',
-        weight: 0.15,
-      },
-      {
-        title: 'Time of Transaction',
-        description: 'Transaction occurred during normal business hours',
-        impact: 'positive',
-        weight: 0.1,
-      },
-      {
-        title: 'Recipient Verification',
-        description: riskScore > 80 ? 'New recipient with no prior relationship' : 'Known recipient',
-        impact: riskScore > 80 ? 'negative' : 'positive',
-        weight: 0.3,
-      },
-    ],
-    timestamp: new Date().toISOString(),
-  };
-};
-
-export const mockDashboardStats: DashboardStats = {
-  totalTransactions: 15847,
-  flaggedTransactions: 342,
-  totalVolume: 48750000,
-  avgRiskScore: 23.5,
-  recentAlerts: 12,
-};
-
-export const mockNotifications: Notification[] = [
+export const mockChatSessions: ChatSession[] = [
   {
     id: '1',
-    message: 'Transaction flagged as suspicious',
-    time: '2 minutes ago',
-    severity: 'high',
-    read: false,
+    title: 'Feeling stressed about exams',
+    date: '2026-04-07',
+    messages: [
+      { id: 'm1', role: 'user', content: 'I have been feeling really stressed about my upcoming exams.', timestamp: '2026-04-07T10:00:00Z' },
+      { id: 'm2', role: 'ai', content: "I hear you, and exam stress is something so many students deal with. It's completely natural to feel this way. Can you tell me what subject is worrying you the most?", timestamp: '2026-04-07T10:00:03Z' },
+      { id: 'm3', role: 'user', content: 'Data Structures. I feel like I am so behind.', timestamp: '2026-04-07T10:01:00Z' },
+      { id: 'm4', role: 'ai', content: "Feeling behind can be overwhelming, but remember — you don't have to catch up on everything at once. Let's think about one small topic you could start with today. Sometimes breaking it into tiny steps makes it feel manageable. What's one concept you'd like to review first?", timestamp: '2026-04-07T10:01:04Z' },
+    ],
   },
   {
     id: '2',
-    message: 'High-risk transaction detected',
-    time: '15 minutes ago',
-    severity: 'high',
-    read: false,
+    title: 'Trouble sleeping lately',
+    date: '2026-04-06',
+    messages: [
+      { id: 'm5', role: 'user', content: "I haven't been able to sleep well for the past week.", timestamp: '2026-04-06T23:00:00Z' },
+      { id: 'm6', role: 'ai', content: "I'm sorry to hear that. Sleep issues can really affect how you feel during the day. Have you noticed any changes in your routine or anything that might be keeping your mind active at night?", timestamp: '2026-04-06T23:00:03Z' },
+    ],
   },
   {
     id: '3',
-    message: 'Fraud explanation generated',
-    time: '1 hour ago',
-    severity: 'medium',
-    read: true,
+    title: 'Feeling homesick',
+    date: '2026-04-05',
+    messages: [
+      { id: 'm7', role: 'user', content: 'I really miss my family. Being away from home is hard.', timestamp: '2026-04-05T18:00:00Z' },
+      { id: 'm8', role: 'ai', content: "Homesickness is such a common and deeply human feeling, especially when you're living away for the first time. It shows how much your family means to you. Have you been able to call or video chat with them recently?", timestamp: '2026-04-05T18:00:04Z' },
+    ],
   },
-  {
-    id: '4',
-    message: 'New transaction requires review',
-    time: '2 hours ago',
-    severity: 'medium',
-    read: true,
-  },
-  {
-    id: '5',
-    message: 'System scan completed successfully',
-    time: '3 hours ago',
-    severity: 'low',
-    read: true,
-  },
+];
+
+export const mockMoodEntries: MoodEntry[] = [
+  { id: '1', mood: 'happy', label: 'Happy', emoji: '😊', score: 5, date: '2026-04-07' },
+  { id: '2', mood: 'neutral', label: 'Okay', emoji: '😐', score: 3, date: '2026-04-06' },
+  { id: '3', mood: 'sad', label: 'Sad', emoji: '😔', score: 2, date: '2026-04-05' },
+  { id: '4', mood: 'sad', label: 'Sad', emoji: '😔', score: 2, date: '2026-04-04' },
+  { id: '5', mood: 'tired', label: 'Tired', emoji: '😴', score: 2, date: '2026-04-03' },
+  { id: '6', mood: 'neutral', label: 'Okay', emoji: '😐', score: 3, date: '2026-04-02' },
+  { id: '7', mood: 'happy', label: 'Happy', emoji: '😊', score: 4, date: '2026-04-01' },
+  { id: '8', mood: 'angry', label: 'Frustrated', emoji: '😡', score: 1, date: '2026-03-31' },
+  { id: '9', mood: 'happy', label: 'Happy', emoji: '😊', score: 5, date: '2026-03-30' },
+  { id: '10', mood: 'neutral', label: 'Okay', emoji: '😐', score: 3, date: '2026-03-29' },
+  { id: '11', mood: 'tired', label: 'Tired', emoji: '😴', score: 2, date: '2026-03-28' },
+  { id: '12', mood: 'happy', label: 'Happy', emoji: '😊', score: 4, date: '2026-03-27' },
+  { id: '13', mood: 'sad', label: 'Sad', emoji: '😔', score: 2, date: '2026-03-26' },
+  { id: '14', mood: 'neutral', label: 'Okay', emoji: '😐', score: 3, date: '2026-03-25' },
+];
+
+export const moodOptions = [
+  { mood: 'happy' as const, emoji: '😊', label: 'Happy', score: 5 },
+  { mood: 'neutral' as const, emoji: '😐', label: 'Okay', score: 3 },
+  { mood: 'sad' as const, emoji: '😔', label: 'Sad', score: 2 },
+  { mood: 'angry' as const, emoji: '😡', label: 'Frustrated', score: 1 },
+  { mood: 'tired' as const, emoji: '😴', label: 'Tired', score: 2 },
 ];
