@@ -1,19 +1,14 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ToastProvider } from "@/components/Toast";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import DashboardLayout from "@/layouts/DashboardLayout";
 
-import Index from "./pages/Index";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import DashboardHome from "./pages/dashboard/DashboardHome";
-import NewTransaction from "./pages/dashboard/NewTransaction";
-import LiveStream from "./pages/dashboard/LiveStream";
-import RiskResults from "./pages/dashboard/RiskResults";
-import Settings from "./pages/dashboard/Settings";
+import Dashboard from "./pages/Dashboard";
+import Chat from "./pages/Chat";
+import MoodDashboard from "./pages/MoodDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,26 +20,11 @@ const App = () => (
         <TooltipProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              
-              {/* Protected Dashboard Routes */}
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <DashboardLayout />
-                  </ProtectedRoute>
-                }
-              >
-                <Route index element={<DashboardHome />} />
-                <Route path="new" element={<NewTransaction />} />
-                <Route path="live" element={<LiveStream />} />
-                <Route path="results" element={<RiskResults />} />
-                <Route path="settings" element={<Settings />} />
-              </Route>
-
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+              <Route path="/mood" element={<ProtectedRoute><MoodDashboard /></ProtectedRoute>} />
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
